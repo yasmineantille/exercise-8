@@ -1,4 +1,4 @@
-# Exercise 8: Multi-Agent Organizations
+# Exercise 8: Organized Agents
 
 A template for an application implemented with the [JaCaMo 0.9](http://jacamo.sourceforge.net/?page_id=40) framework for programming Multi-Agent Systems (MAS). 
 
