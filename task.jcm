@@ -1,0 +1,64 @@
+/*
+    org_step1
+    ---------------------------
+
+    JaCaMo Project File
+
+    This file defines the initial state of the MAS (initial agents, environment, organisation, ....)
+
+    (see jacamo/doc/jcm.html for more information about what can be defined in this file)
+
+    JaCaMo <VERSION>
+    <DATE>
+*/
+
+mas exercise8 {
+
+
+    agent org_agent {
+    	join: server
+    }
+
+    agent sensing_agent {
+      join: server
+      //  roles: observer in easss_org.easss_team
+    }
+
+    agent acting_agent {
+      join: server
+      //  roles: observer in easss_org.easss_team
+    }
+
+
+
+  /*
+  agent user1 : org_agent.asl {
+      join: server
+      roles: observer in easss_org.easss_team
+  }
+
+    agent org1 : org_agent.asl {
+        join: server
+        roles: computer in easss_org.easss_team
+    }
+
+    agent org2 : org_agent.asl {
+        join: server
+        roles: observer in easss_org.easss_team
+    }
+
+    agent org3 : org_agent.asl {
+        join: server
+        roles: greeter in easss_org.easss_team
+    }
+*/
+    workspace server {
+  }
+
+
+    // agent source path
+    asl-path: src/agt
+              src/agt/inc
+
+    platform: cartago("infrastructure")
+}
