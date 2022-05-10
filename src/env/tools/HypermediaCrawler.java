@@ -18,6 +18,8 @@ import org.jsoup.select.Elements;
  An artifact crawling a hypermedia environment starting from an entry point URL (entryPoint)
  Followed the patterns for crawlers found at https://www.ra.ethz.ch/cdstore/www7/1875/com1875.htm
  and https://www.javatpoint.com/web-crawler-java
+
+ Task 1 Step 1
 */
 public class HypermediaCrawler extends Artifact {
 

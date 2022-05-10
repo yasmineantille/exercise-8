@@ -7,6 +7,12 @@ org_name("lab_monitoring_org").
 group_name("monitoring_team").
 sch_name("monitoring_scheme").
 
+// Credits to Marc because without him I wouldn't have found the following method.
+has_enough_players_for(R) :-
+  role_cardinality(R, Min, Max) &
+  .count(play(_,R,_),NP) &
+  NP >= Min.
+
 /* Initial goals */
 !start.
 
@@ -17,16 +23,16 @@ sch_name("monitoring_scheme").
   sch_name(SchemeName)
 <-
   .print("I will initialize an organization ", OrgName, " with a group ", GroupName, " and a scheme ", SchemeName, " in workspace ", OrgName);
-  // Step 2
+  // Task 1 Step 2
   makeArtifact("crawler", "tools.HypermediaCrawler", ["https://api.interactions.ics.unisg.ch/hypermedia-environment/was/581b07c7dff45162"], CrawlerId);
   searchEnvironment("Monitor Temperature", DocumentPath);
   .print("Document for the relationType Monitor Temperature found: ", DocumentPath);
 
-  // Step 3
+  // Task 1 Step 3
   makeArtifact(OrgName, "ora4mas.nopl.OrgBoard", [DocumentPath], OrgArtId);
   focus(OrgArtId);
 
-  // Step 4
+  // Task 1 Step 4
   createGroup(GroupName, GroupName, GrpArtId);
   //createGroup(GroupName, "ora4mas.nopl.GroupBoard", GrpArtId);
   focus(GrpArtId);
@@ -35,12 +41,25 @@ sch_name("monitoring_scheme").
   //createScheme(SchemeName, "ora4mas.nopl.SchemeBoard", SchemeArtId);
   focus(SchemeArtId);
 
-  // Step 5
-  .broadcast(tell, organizationDeployed(OrgName));
-  // .broadcast(tell, organizationDeployed(OrgName, GroupName, SchemeName));
+  // Task 1 Step 5
+  .broadcast(tell, organizationDeployed(OrgName, GroupName, SchemeName));
+  // .broadcast(tell, organizationDeployed(OrgName));   // Would it be enough to just send the Org without Group?
 
-  // Step 6
-  ?formation(ok)[artifact_id(GrpArtId)].
+  // Task 1 Step 6
+  //?formationStatus(ok).
+  !manage_formation(OrgName).
+
+// Task 2 Step 3
++!manage_formation(OrgName) : role(R,_) & not has_enough_players_for(R)
+<-
+  .broadcast(tell, roleAvailable(R, OrgName));
+  .print("Looking for role: ", R);
+  .wait(15000);
+  !manage_formation(OrgName).
+
++!manage_formation(OrgName) : formationStatus(ok)
+<-
+  .print("Group is well-formed.").
 
 
 // Plan to add an organization artifact to the inspector_gui
@@ -66,4 +85,4 @@ sch_name("monitoring_scheme").
 { include("$jacamoJar/templates/common-moise.asl") }
 
 // Uncomment if you want to use the organization rules available in https://github.com/moise-lang/moise/blob/master/src/main/resources/asl/org-rules.asl
-//{ include("$moiseJar/asl/org-rules.asl") }
+{ include("$moiseJar/asl/org-rules.asl") }
