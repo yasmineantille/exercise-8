@@ -16,7 +16,32 @@ sch_name("monitoring_scheme").
   group_name(GroupName) &
   sch_name(SchemeName)
 <-
-  .print("I will initialize an organization ", OrgName, " with a group ", GroupName, " and a scheme ", SchemeName, " in workspace ", OrgName).
+  .print("I will initialize an organization ", OrgName, " with a group ", GroupName, " and a scheme ", SchemeName, " in workspace ", OrgName);
+  // Step 2
+  makeArtifact("crawler", "tools.HypermediaCrawler", ["https://api.interactions.ics.unisg.ch/hypermedia-environment/was/581b07c7dff45162"], CrawlerId);
+  searchEnvironment("Monitor Temperature", DocumentPath);
+  .print("Document for the relationType Monitor Temperature found: ", DocumentPath);
+
+  // Step 3
+  makeArtifact(OrgName, "ora4mas.nopl.OrgBoard", [DocumentPath], OrgArtId);
+  focus(OrgArtId);
+
+  // Step 4
+  createGroup(GroupName, GroupName, GrpArtId);
+  //createGroup(GroupName, "ora4mas.nopl.GroupBoard", GrpArtId);
+  focus(GrpArtId);
+  //makeArtifact(GroupName, "ora4mas.nopl.GroupBoard", ["src/org/auction-os.xml"], GrpArtId);
+  createScheme(SchemeName, SchemeName, SchemeArtId);
+  //createScheme(SchemeName, "ora4mas.nopl.SchemeBoard", SchemeArtId);
+  focus(SchemeArtId);
+
+  // Step 5
+  .broadcast(tell, organizationDeployed(OrgName));
+  // .broadcast(tell, organizationDeployed(OrgName, GroupName, SchemeName));
+
+  // Step 6
+  ?formation(ok)[artifact_id(GrpArtId)].
+
 
 // Plan to add an organization artifact to the inspector_gui
 // You can use this plan after creating an organizational artifact so that you can inspect it
