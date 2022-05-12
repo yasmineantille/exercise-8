@@ -25,13 +25,13 @@ i_have_plans_for(R) :-
 	// Task 3 Step 3
   makeArtifact("converter", "tools.Converter", [], ConArtId);
 	focus(ConArtId);
-	convert(TempValue, -20, 20, 200, 830, RescaledValue);
+	convert(TempValue, -20, 200, 30, 830, RescaledValue);
 	.print("Temperature value rescaled: ", RescaledValue);
 	// .print("Mock temperature manifesting");
 
 	// Task 3 Step 4
 	makeArtifact("robot", "wot.ThingArtifact", ["https://raw.githubusercontent.com/Interactions-HSG/example-tds/was/tds/leubot1.ttl"], RobotId);
-  setAPIKey("5e0b607d9546db00c3b4eb59db68838b");
+  setAPIKey("6f190351c8b12abfc209796400548b2f");
   invokeAction("setWristAngle", ["value"], [RescaledValue]).
 
 // Task 2 Step 4

@@ -11,7 +11,7 @@ public class Converter extends Artifact {
     // source for calculation: https://stackoverflow.com/questions/929103/convert-a-number-range-to-another-range-maintaining-ratio
     @OPERATION
     public void convert(double initValue, int sourceMin, int targetMin, int sourceMax, int targetMax, OpFeedbackParam<Integer> rescaledValue) {
-        double rescaled = ((initValue - sourceMin) / (sourceMax - sourceMin) * (targetMax - targetMin) + targetMin);
+        double rescaled = ((initValue - (double) sourceMin) / ((double) sourceMax - (double) sourceMin) * ((double) targetMax - (double) targetMin) + (double) targetMin);
         System.out.println((int) rescaled);
         rescaledValue.set((int) rescaled);
     }
