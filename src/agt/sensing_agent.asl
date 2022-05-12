@@ -21,29 +21,30 @@ i_have_plans_for(R) :-
 	.print("Hello from ",Me).
 
 // Plan to achieve reading the air temperature using a robotic arm
-+!read_temperature : true <-
++!read_temperature : true
+<-
   // Task 3 Step 1
 	.print("Reading temperature...");
   makeArtifact("weatherStation", "wot.ThingArtifact", ["https://raw.githubusercontent.com/Interactions-HSG/example-tds/was/tds/weather-station.ttl"], WeatherStationId);
-	//focus(WeatherStationId);
+	focus(WeatherStationId);
 	readProperty("Temperature", _, Temperature);
-	.broadcast(tell, temperatureReading(Temperature));
-	.print("Mock temperature reading (Celcious): ", Temperature).
+	.nth(0, Temperature, Temp);	// to read the first array entry (thanks Marc & Erik)
+	.broadcast(tell, temperatureReading(Temp));
+	.print("Temperature reading (Celsius): ", Temp).
 
 // Task 2 Step 1
 +organizationDeployed(OrgName, GroupName, SchemeName) : true <-
-		.print("Joining deployed organisation: ", OrgName);
-		lookupArtifact(OrgName, OrgArtId);
-		focus(OrgArtId);
-		lookupArtifact(GroupName, GrpArtId);
-		focus(GrpArtId);
-		// I think Scheme isn't necessary here?
-		//lookupArtifact(SchemeName, SchemeArtId);
-		//focus(SchemeArtId);
-		!reasonAndAdoptRoles.
+	.print("Joining deployed organisation: ", OrgName);
+	lookupArtifact(OrgName, OrgArtId);
+	focus(OrgArtId);
+	lookupArtifact(GroupName, GrpArtId);
+	focus(GrpArtId);
+	// I think Scheme isn't necessary here?
+	//lookupArtifact(SchemeName, SchemeArtId);
+	//focus(SchemeArtId);
+	!reasonAndAdoptRoles.
 
 // Task 2 Step 2
-// TODO is this all that needs to be done here?
 +!reasonAndAdoptRoles : role(R, _) & i_have_plans_for(R)
 <-
 	.print("Adopting role: ", R);
@@ -55,6 +56,20 @@ i_have_plans_for(R) :-
   focus(OrgArtId);
   !reasonAndAdoptRoles.
 
++obligation(Ag, MCond, committed(Ag,Mission,Scheme), Deadline) :
+  .my_name(Ag)
+  <-
+  .print("My obligation is ", Mission);
+  commitMission(Mission)[artifact_name(Scheme)];
+  lookupArtifact(Scheme, SchemeArtId);
+  focus(SchemeArtId).
+
++obligation(Ag, MCond, done(Scheme,Goal,Ag), Deadline) :
+  .my_name(Ag)
+  <-
+  .print("My goal is ", Goal);
+  !Goal[scheme(Scheme)];
+  goalAchieved(Goal)[artifact_name(Scheme)].
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

@@ -7,7 +7,7 @@ org_name("lab_monitoring_org").
 group_name("monitoring_team").
 sch_name("monitoring_scheme").
 
-// Credits to Marc because without him I wouldn't have found the following method.
+// Credits to Marc because without him I wouldn't have found the following method
 has_enough_players_for(R) :-
   role_cardinality(R, Min, Max) &
   .count(play(_,R,_),NP) &
@@ -28,6 +28,9 @@ has_enough_players_for(R) :-
   searchEnvironment("Monitor Temperature", DocumentPath);
   .print("Document for the relationType Monitor Temperature found: ", DocumentPath);
 
+  // Helper for Task 4 Step 2
+  makeArtifact("repHelper", "tools.Helper", [], HelperId);
+
   // Task 1 Step 3
   makeArtifact(OrgName, "ora4mas.nopl.OrgBoard", [DocumentPath], OrgArtId);
   focus(OrgArtId);
@@ -47,14 +50,15 @@ has_enough_players_for(R) :-
 
   // Task 1 Step 6
   //?formationStatus(ok).
-  !manage_formation(OrgName).
+  !manage_formation(OrgName);
+  addScheme(SchemeName)[artifact_id(GrpArtId)].
 
 // Task 2 Step 3
 +!manage_formation(OrgName) : role(R,_) & not has_enough_players_for(R)
 <-
   .broadcast(tell, roleAvailable(R, OrgName));
   .print("Looking for role: ", R);
-  .wait(15000);
+  .wait(150);
   !manage_formation(OrgName).
 
 +!manage_formation(OrgName) : formationStatus(ok)
@@ -79,6 +83,24 @@ has_enough_players_for(R) :-
 +play(Ag, Role, GroupId) : true
 <-
   .print("Agent ", Ag, " adopted the role ", Role, " in group ", GroupId).
+
+
+// Thanks to Marc discovered this in book
++obligation(Ag, MCond, committed(Ag,Mission,Scheme), Deadline) : true
+<-
+  getCurrentTimeMillisecs(Time);
+  +missionStarted(Ag, Time).
+
++oblFulfilled(obligation(Ag, MCond, done(Scheme,Goal,Ag), Deadline)) :
+  missionStarted(Ag,MissionStartTime) &
+  reputation(Ag,Reputation)
+<-
+  .print("Reputation for Deadline ", Deadline, " and mission started ", MissionStartTime);
+  computeReputationChange(MissionStartTime, Deadline, Reputation, NewReputation);
+  -reputation(Ag, Reputation);
+  +reputation(Ag, NewReputation);
+  .print("Reputation of Agent ", Ag, " changed from ", Reputation, " to ", NewReputation).
+
 
 // Additional behavior
 { include("$jacamoJar/templates/common-cartago.asl") }
